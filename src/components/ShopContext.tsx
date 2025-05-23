@@ -70,7 +70,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchShopData()
-  }, [user])
+  }, [fetchShopData])
 
   const refreshShop = async () => {
     await fetchShopData()

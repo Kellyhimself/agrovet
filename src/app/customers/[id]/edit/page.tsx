@@ -127,7 +127,7 @@ export default function EditCustomerPage({ params }: { params: { id: string } })
         <div className="text-center">
           <h1 className="text-xl font-semibold text-gray-900">Customer not found</h1>
           <p className="mt-2 text-sm text-gray-700">
-            The customer you're looking for doesn't exist or you don't have permission to view it.
+            We&apos;re sorry, but we couldn&apos;t find the customer you&apos;re looking for.
           </p>
           <div className="mt-6">
             <button

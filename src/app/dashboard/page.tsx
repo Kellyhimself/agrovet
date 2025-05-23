@@ -74,6 +74,8 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      <p>Let&apos;s get started!</p>
     </div>
   )
 } 

@@ -51,7 +51,7 @@ export default function HomePage() {
     }
 
     checkUserAndShop()
-  }, [])
+  }, [supabase])
 
   if (!isChecking) {
     return null

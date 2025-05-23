@@ -64,7 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [checkAuth, supabase.auth])
 
   const signOut = async () => {
     try {

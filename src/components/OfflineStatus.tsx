@@ -12,7 +12,7 @@ export const OfflineStatus: React.FC = () => {
     <div className="fixed bottom-4 right-4 z-50">
       {!isOnline && (
         <div className="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-lg mb-2">
-          You are offline. Changes will be synced when you're back online.
+          You&apos;re currently offline. Changes will be synced when you&apos;re back online.
         </div>
       )}
       {pendingSyncs > 0 && (

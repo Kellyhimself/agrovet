@@ -22,7 +22,7 @@ export default function CheckEmailPage() {
       }
     }
     getEmail()
-  }, [])
+  }, [email, supabase.auth])
 
   return (
     <div className="min-h-screen bg-emerald-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -33,7 +33,7 @@ export default function CheckEmailPage() {
               Check your email
             </h2>
             <p className="text-emerald-200 mb-4">
-              We've sent a magic link to{' '}
+              We&apos;ve sent a magic link to{' '}
               <span className="font-medium text-emerald-50">{email}</span>
             </p>
             <p className="text-sm text-emerald-300 mb-6">

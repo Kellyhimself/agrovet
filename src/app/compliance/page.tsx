@@ -7,7 +7,6 @@ import { useShop } from '@/components/ShopContext'
 import { useOffline } from '@/lib/offline-context'
 import { offlineStorage } from '@/lib/offline'
 import { format } from 'date-fns'
-import { toast } from 'sonner'
 
 type RegulatedProduct = {
   id: string

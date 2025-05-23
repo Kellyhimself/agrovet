@@ -63,7 +63,7 @@ export default function NewCustomerPage() {
       toast.success('Customer created successfully')
       router.push('/customers')
     },
-    onError: (error) => {
+    onError: () => {
       toast.error('Failed to create customer')
     }
   })
