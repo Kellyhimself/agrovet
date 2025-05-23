@@ -22,7 +22,7 @@ export default function CheckEmailPage() {
       }
     }
     getEmail()
-  }, [email, supabase.auth])
+  }, [supabase.auth])
 
   return (
     <div className="min-h-screen bg-emerald-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

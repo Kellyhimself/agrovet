@@ -36,7 +36,7 @@ export default function AuthPage() {
             </>
           ) : (
             <>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <button
                 onClick={() => setMode('signup')}
                 className="font-medium text-emerald-400 hover:text-emerald-300"
