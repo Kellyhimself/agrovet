@@ -1,6 +1,5 @@
 {
   "buildCommand": "next build",
-  "ignoreCommand": "echo 'Skipping TypeScript and ESLint checks'",
   "builds": [
     {
       "src": "package.json",
