@@ -76,7 +76,7 @@ export default function NewProductPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-medium text-gray-100 mb-2">Add New Product</h1>
+        <h1 className="text-2xl font-medium text-gray-900 mb-2">Add New Product</h1>
         <div className="bg-white rounded-lg shadow-md p-3">
           <ProductForm
             onSubmit={async (data) => {

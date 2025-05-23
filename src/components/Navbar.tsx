@@ -48,7 +48,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-emerald-900 text-emerald-50">
+    <nav className="fixed top-0 left-0 right-0 bg-emerald-900 text-emerald-50 z-50 shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="text-xl font-bold">

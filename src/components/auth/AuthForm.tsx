@@ -31,6 +31,9 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
     setMessage(null)
 
     try {
+      const redirectTo = getRedirectUrl()
+      console.log('Using redirect URL:', redirectTo)
+
       if (mode === 'signup') {
         // Sign up with email and phone using magic link
         const { error: signUpError } = await supabase.auth.signInWithOtp({
@@ -40,7 +43,8 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
               phone: phone || null,
               is_signup: true
             },
-            emailRedirectTo: getRedirectUrl()
+            emailRedirectTo: redirectTo,
+            shouldCreateUser: true
           }
         })
         if (signUpError) throw signUpError
@@ -51,7 +55,8 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
         const { error: signInError } = await supabase.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: getRedirectUrl()
+            emailRedirectTo: redirectTo,
+            shouldCreateUser: false
           }
         })
         if (signInError) throw signInError
@@ -59,6 +64,7 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
         onSuccess?.()
       }
     } catch (err) {
+      console.error('Auth error:', err)
       setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setIsLoading(false)

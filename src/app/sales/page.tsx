@@ -57,6 +57,10 @@ export default function SalesPage() {
   const [sortBy, setSortBy] = useState<SortOption>('date_desc')
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [syncFilter, setSyncFilter] = useState<string>('all')
+  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
+    start: '',
+    end: ''
+  })
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [isRetrying, setIsRetrying] = useState<string | null>(null)
   const [isDeletingAll, setIsDeletingAll] = useState(false)
@@ -74,7 +78,7 @@ export default function SalesPage() {
 
   // Fetch sales with TanStack Query
   const { data: sales = [], isLoading: isSalesLoading, error: queryError } = useQuery({
-    queryKey: ['sales', shop?.id, selectedPaymentMethod, sortBy, searchQuery, syncFilter],
+    queryKey: ['sales', shop?.id, selectedPaymentMethod, sortBy, searchQuery, syncFilter, dateRange],
     queryFn: async () => {
       if (!shop?.id) throw new Error('No shop found')
 
@@ -96,6 +100,14 @@ export default function SalesPage() {
       // Apply search filter
       if (searchQuery) {
         query = query.ilike('product.name', `%${searchQuery}%`)
+      }
+
+      // Apply date range filter
+      if (dateRange.start) {
+        query = query.gte('sale_date', dateRange.start)
+      }
+      if (dateRange.end) {
+        query = query.lte('sale_date', dateRange.end)
       }
 
       // Apply sorting
@@ -318,6 +330,28 @@ export default function SalesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full sm:w-64 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 placeholder-gray-500"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label htmlFor="date_start" className="text-gray-700 font-medium text-sm sm:text-base whitespace-nowrap">From:</label>
+          <input
+            type="date"
+            id="date_start"
+            value={dateRange.start}
+            onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 bg-white"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label htmlFor="date_end" className="text-gray-700 font-medium text-sm sm:text-base whitespace-nowrap">To:</label>
+          <input
+            type="date"
+            id="date_end"
+            value={dateRange.end}
+            onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
+            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-gray-900 bg-white"
           />
         </div>
 
