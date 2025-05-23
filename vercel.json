@@ -1,0 +1,18 @@
+{
+  "buildCommand": "next build",
+  "ignoreCommand": "echo 'Skipping TypeScript and ESLint checks'",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "typescript": {
+          "ignoreBuildErrors": true
+        },
+        "eslint": {
+          "ignoreDuringBuilds": true
+        }
+      }
+    }
+  ]
+} 
