@@ -13,6 +13,15 @@ export default function CheckEmailPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
+  // Get the correct redirect URL based on environment
+  const getRedirectUrl = () => {
+    const isProduction = process.env.NODE_ENV === 'production'
+    if (isProduction) {
+      return 'https://agrovet.veylor360.com'
+    }
+    return process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+  }
+
   useEffect(() => {
     const getEmail = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -37,6 +46,11 @@ export default function CheckEmailPage() {
             </p>
             <p className="text-sm text-emerald-300 mb-6">
               Click the link in the email to continue. The link will expire in 24 hours.
+              {process.env.NODE_ENV === 'production' && (
+                <span className="block mt-2">
+                  You will be redirected to {getRedirectUrl()}
+                </span>
+              )}
             </p>
             <div className="space-y-4">
               <button

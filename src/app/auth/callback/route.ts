@@ -11,7 +11,7 @@ function getBaseUrl(request: NextRequest) {
   if (isProduction) {
     return 'https://agrovet.veylor360.com'
   }
-  return request.nextUrl.origin
+  return process.env.NEXT_PUBLIC_APP_URL || request.nextUrl.origin
 }
 
 export async function GET(request: NextRequest) {

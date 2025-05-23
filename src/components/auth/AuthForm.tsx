@@ -15,6 +15,15 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
 
   const supabase = getSupabaseClient()
 
+  // Get the correct redirect URL based on environment
+  const getRedirectUrl = () => {
+    const isProduction = process.env.NODE_ENV === 'production'
+    if (isProduction) {
+      return 'https://agrovet.veylor360.com/auth/callback'
+    }
+    return `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -31,7 +40,7 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
               phone: phone || null,
               is_signup: true
             },
-            emailRedirectTo: `${window.location.origin}/auth/callback`
+            emailRedirectTo: getRedirectUrl()
           }
         })
         if (signUpError) throw signUpError
@@ -42,7 +51,7 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
         const { error: signInError } = await supabase.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`
+            emailRedirectTo: getRedirectUrl()
           }
         })
         if (signInError) throw signInError
