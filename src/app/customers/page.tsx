@@ -6,11 +6,10 @@ import { createBrowserClient } from '@supabase/ssr'
 import { useShop } from '@/components/ShopContext'
 import { useOffline } from '@/lib/offline-context'
 import { offlineStorage } from '@/lib/offline'
-import { Customer } from '@/types'
+import Link from 'next/link'
 import { format } from 'date-fns'
 import { toast } from 'sonner'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
-import Link from 'next/link'
 
 export default function CustomersPage() {
   const { shop } = useShop()
@@ -24,7 +23,7 @@ export default function CustomersPage() {
   )
 
   // Fetch customers
-  const { data: customers = [], isLoading } = useQuery({
+  const { data: customers } = useQuery({
     queryKey: ['customers', shop?.id],
     queryFn: async () => {
       if (!shop?.id) throw new Error('No shop found')

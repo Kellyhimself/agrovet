@@ -42,22 +42,27 @@ export async function middleware(request: NextRequest) {
   )
 
   try {
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-    // If no session and not on auth page, redirect to auth
-    if (!session && !request.nextUrl.pathname.startsWith('/auth')) {
+    // If no user and not on auth page, redirect to auth
+    if (!user && !request.nextUrl.pathname.startsWith('/auth')) {
       return NextResponse.redirect(new URL('/auth', request.url))
     }
 
-    // If we have a session, check for shop access
-    if (session) {
+    // If we have a user, check for shop access
+    if (user) {
       try {
         // Check if user has a shop
-        const { data: shopUser } = await supabase
+        const { data: shopUser, error: shopError } = await supabase
           .from('shop_users')
           .select('shop_id')
-          .eq('user_id', session.user.id)
+          .eq('user_id', user.id)
           .maybeSingle()
+
+        if (shopError) {
+          console.error('Error checking shop status:', shopError)
+          return response
+        }
 
         // If user has no shop and is not on the register page, redirect to register
         if (!shopUser && !request.nextUrl.pathname.startsWith('/shop/register')) {
@@ -69,16 +74,14 @@ export async function middleware(request: NextRequest) {
           return NextResponse.redirect(new URL('/', request.url))
         }
       } catch (error) {
-        // If we can't check shop status (offline), allow access to the page
-        // The offline context will handle the UI state
+        console.error('Error in shop check:', error)
         return response
       }
     }
 
     return response
   } catch (error) {
-    // If we can't verify auth (offline), allow access to the page
-    // The offline context will handle the UI state
+    console.error('Error in middleware:', error)
     return response
   }
 }

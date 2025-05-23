@@ -14,7 +14,6 @@ export default function CheckEmailPage() {
   )
 
   useEffect(() => {
-    // Get the email from the session
     const getEmail = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user?.email) {

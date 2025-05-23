@@ -26,6 +26,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   const fetchShopData = async () => {
     if (!user) {
+      console.log('No user found, skipping shop data fetch')
       setShop(null)
       setUserRole(null)
       setError(null)
@@ -37,6 +38,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       setIsLoading(true)
       setError(null)
 
+      console.log('Fetching shop data for user:', user.id)
       const { data: shopData, error: shopError } = await supabase
         .from('shops')
         .select(`
@@ -52,6 +54,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         setUserRole(null)
         setError(shopError.message)
       } else {
+        console.log('Shop data fetched successfully:', shopData)
         setShop(shopData)
         // Set the user's role
         const currentUser = shopData.users.find((u: ShopUser) => u.user_id === user.id)
@@ -69,8 +72,12 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
-    fetchShopData()
-  }, [fetchShopData])
+    if (user) {
+      fetchShopData()
+    } else {
+      setIsLoading(false)
+    }
+  }, [user])
 
   const refreshShop = async () => {
     await fetchShopData()

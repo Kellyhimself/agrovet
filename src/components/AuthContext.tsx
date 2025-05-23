@@ -27,18 +27,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true)
       setError(null)
 
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      console.log('Checking authentication status...')
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
       
-      if (sessionError) {
-        console.error('Session error:', sessionError)
+      if (userError) {
+        console.error('User error:', userError)
         setSession(null)
         setUser(null)
-        setError(sessionError.message)
+        setError(userError.message)
         return
       }
+
+      if (!user) {
+        console.log('No authenticated user found')
+        setSession(null)
+        setUser(null)
+        return
+      }
+
+      console.log('User authenticated:', { id: user.id, email: user.email })
+      setUser(user)
       
-      setSession(session)
-      setUser(session?.user ?? null)
+      // Get session after confirming user
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      if (sessionError) {
+        console.error('Session error:', sessionError)
+        setError(sessionError.message)
+      } else {
+        setSession(session)
+      }
     } catch (error) {
       console.error('Error checking auth:', error)
       setSession(null)
@@ -53,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event)
       setSession(session)
       setUser(session?.user ?? null)
       
@@ -64,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [checkAuth, supabase.auth])
+  }, [])
 
   const signOut = async () => {
     try {

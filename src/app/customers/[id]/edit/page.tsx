@@ -95,7 +95,7 @@ export default function EditCustomerPage({ params }: { params: { id: string } })
       toast.success('Customer updated successfully')
       router.push('/customers')
     },
-    onError: (error) => {
+    onError: () => {
       toast.error('Failed to update customer')
     }
   })

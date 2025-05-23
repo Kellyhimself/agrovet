@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     )
 
     console.log('Exchanging code for session')
-    const { data: { session }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
+    const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
 
     if (sessionError) {
       console.error('Session error:', sessionError)
@@ -67,11 +67,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(authUrl)
     }
 
-    const user = session?.user
-    if (!user) {
-      console.log('No user found in session, redirecting to auth page')
+    // Get authenticated user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    
+    if (userError || !user) {
+      console.error('User error:', userError)
       return NextResponse.redirect(new URL('/auth', request.url))
     }
+    
     console.log('User authenticated:', { id: user.id, email: user.email })
 
     // Check if user has a shop

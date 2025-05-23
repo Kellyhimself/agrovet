@@ -6,6 +6,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useOffline } from '@/lib/offline-context'
 import { offlineStorage } from '@/lib/offline'
 import { Product, Customer, SaleFormData } from '@/types'
+import { useMutation } from '@tanstack/react-query'
+import { useShop } from '@/components/ShopContext'
+import { toast } from 'sonner'
 
 interface SaleFormProps {
   shopId: string
@@ -103,6 +106,12 @@ export default function SaleForm({
     }
   }, [selectedProduct, formData.quantity])
 
+  useEffect(() => {
+    if (formData && onFormDataChange) {
+      onFormDataChange(formData)
+    }
+  }, [formData, onFormDataChange])
+
   const handleAddToCart = () => {
     if (!selectedProduct) return
 
@@ -183,7 +192,7 @@ export default function SaleForm({
         total_price: 0
       })
     } catch (error) {
-      // Silent error handling
+      toast.error('Failed to create sale')
     }
   }
 
