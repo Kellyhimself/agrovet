@@ -5,17 +5,27 @@ import type { NextRequest } from 'next/server'
 export const dynamic = 'force-dynamic'
 export const runtime = 'edge'
 
+// Helper function to get base URL based on environment
+function getBaseUrl(request: NextRequest) {
+  const isProduction = process.env.NODE_ENV === 'production'
+  if (isProduction) {
+    return 'https://agrovet.veylor360.com'
+  }
+  return request.nextUrl.origin
+}
+
 export async function GET(request: NextRequest) {
   console.log('Auth callback route started')
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
   const error = requestUrl.searchParams.get('error')
   const errorDescription = requestUrl.searchParams.get('error_description')
+  const baseUrl = getBaseUrl(request)
 
   // Handle expired or invalid links
   if (error === 'access_denied' && errorDescription?.includes('expired')) {
     console.log('Magic link expired, redirecting to auth page with error')
-    const authUrl = new URL('/auth', request.url)
+    const authUrl = new URL('/auth', baseUrl)
     authUrl.searchParams.set('error', 'link_expired')
     authUrl.searchParams.set('message', 'Your magic link has expired. Please request a new one.')
     return NextResponse.redirect(authUrl)
@@ -23,13 +33,13 @@ export async function GET(request: NextRequest) {
 
   if (!code) {
     console.log('No code provided in callback, redirecting to auth page')
-    return NextResponse.redirect(new URL('/auth', request.url))
+    return NextResponse.redirect(new URL('/auth', baseUrl))
   }
 
   try {
     console.log('Creating response and Supabase client')
-    // Create a new response
-    const response = NextResponse.redirect(new URL('/', request.url))
+    // Create a new response with the correct base URL
+    const response = NextResponse.redirect(new URL('/', baseUrl))
     
     // Create Supabase client
     const supabase = createServerClient(
@@ -61,7 +71,7 @@ export async function GET(request: NextRequest) {
 
     if (sessionError) {
       console.error('Session error:', sessionError)
-      const authUrl = new URL('/auth', request.url)
+      const authUrl = new URL('/auth', baseUrl)
       authUrl.searchParams.set('error', 'session_error')
       authUrl.searchParams.set('message', 'Failed to create session. Please try again.')
       return NextResponse.redirect(authUrl)
@@ -72,7 +82,7 @@ export async function GET(request: NextRequest) {
     
     if (userError || !user) {
       console.error('User error:', userError)
-      return NextResponse.redirect(new URL('/auth', request.url))
+      return NextResponse.redirect(new URL('/auth', baseUrl))
     }
     
     console.log('User authenticated:', { id: user.id, email: user.email })
@@ -87,18 +97,18 @@ export async function GET(request: NextRequest) {
 
     if (shopError) {
       console.error('Error checking shop status:', shopError)
-      return NextResponse.redirect(new URL('/auth', request.url))
+      return NextResponse.redirect(new URL('/auth', baseUrl))
     }
 
     // Update redirect URL based on shop status
-    const redirectUrl = shopUser ? '/' : '/shop/register'
+    const redirectUrl = shopUser ? '/dashboard' : '/shop/register'
     console.log('Shop status check result:', {
       hasShop: !!shopUser,
       shopId: shopUser?.shop_id,
       redirectingTo: redirectUrl
     })
     
-    response.headers.set('Location', new URL(redirectUrl, request.url).toString())
+    response.headers.set('Location', new URL(redirectUrl, baseUrl).toString())
     console.log('Redirecting user to:', redirectUrl)
 
     return response
@@ -108,7 +118,7 @@ export async function GET(request: NextRequest) {
       message: err instanceof Error ? err.message : 'Unknown error',
       stack: err instanceof Error ? err.stack : undefined
     })
-    const authUrl = new URL('/auth', request.url)
+    const authUrl = new URL('/auth', baseUrl)
     authUrl.searchParams.set('error', 'unexpected_error')
     authUrl.searchParams.set('message', 'An unexpected error occurred. Please try again.')
     return NextResponse.redirect(authUrl)
